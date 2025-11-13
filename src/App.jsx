@@ -1,35 +1,73 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// src/App.jsx
+import { useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import NavBar from './components/NavBar/NavBar.jsx';
+import MailboxForm from './components/MailboxForm/MailboxForm.jsx';
+import MailboxList from './components/MailboxList/MailboxList.jsx';
+import MailboxDetails from './components/MailboxDetails/MailboxDetails.jsx';
+import LetterForm from './components/LetterForm/LetterForm.jsx';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const [mailboxes, setMailboxes] = useState([]);
+  const [letters, setLetters] = useState([]);
+
+  const addBox = (formData) => {
+    const newBox = {
+      _id: mailboxes.length + 1, 
+      boxOwner: formData.boxOwner,
+      boxSize: formData.boxSize,
+    };
+
+    setMailboxes((prevMailboxes) => [...prevMailboxes, newBox]);
+  };
+
+  const addLetter = (formData) => {
+    setLetters((prevLetters) => [...prevLetters, formData]);
+  };
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+      <NavBar />
 
-export default App
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <main>
+              <h1>Post Office</h1>
+            </main>
+          }
+        />
+
+        <Route
+          path="/mailboxes"
+          element={<MailboxList mailboxes={mailboxes} />}
+        />
+
+        <Route
+          path="/new-mailbox"
+          element={<MailboxForm addBox={addBox} />}
+        />
+
+        <Route
+          path="/new-letter"
+          element={
+            <LetterForm mailboxes={mailboxes} addLetter={addLetter} />
+          }
+        />
+
+        <Route
+          path="/mailboxes/:mailboxId"
+          element={
+            <MailboxDetails mailboxes={mailboxes} letters={letters} />
+          }
+        />
+      </Routes>
+    </>
+  );
+};
+
+export default App;
+
+
+
